@@ -19,7 +19,7 @@
 var app = {
     // Application Constructor
     initialize: function () {
-        document.getElementById('pic-button').onclick = function() {takePicture()};
+        document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     },
 
     // deviceready Event Handler
@@ -27,25 +27,21 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function () {
+        document.getElementById('pic-button').onclick = function () {
+            takePicture(Camera.PictureSourceType.CAMERA)
+        };
+        document.getElementById('gallery-button').onclick = function () {
+            takePicture(Camera.PictureSourceType.PHOTOLIBRARY)
+        };
     },
 
     // Update DOM on a Received Event
     receivedEvent: function (id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
     }
 };
 
-function takePicture() {
-    // Code partially copied from cordova documentation
-    //
-    navigator.camera.getPicture(onSuccess, onFail);
+function takePicture(source) {
+    navigator.camera.getPicture(onSuccess, onFail, { sourceType: source });
 
     function onSuccess(imageURI) {
         var image = document.getElementById('myImage');
